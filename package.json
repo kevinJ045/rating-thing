@@ -1,0 +1,16 @@
+{
+  "name": "rate",
+  "version": "1.0.0",
+  "main": "jquery.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "description": "",
+  "dependencies": {
+    "rayous": "^2.8.1"
+  }
+}

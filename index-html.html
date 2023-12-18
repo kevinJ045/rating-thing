@@ -1,0 +1,224 @@
+<html>
+	<head>
+
+		<style>
+
+			body{
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				margin: 0;
+				padding: 0;
+				background-color: #000000;
+				color: #ffffff;
+			}
+
+			.rate-container{
+				position: absolute;
+				width: 95%;
+				max-width: 800px;
+				height: auto;
+				max-height: 90vh;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background-color: #111111;
+				overflow: auto;
+			}
+
+			.rate-container .rate-class{
+				width: calc(100% - 20px);
+				height: 80px;
+				margin: 10px;
+				background-color: #202020;
+				display: flex;
+			}
+
+			.rate-container .rate-class .rate-class-type{
+				width: 80px;
+				height: 80px;
+				text-align: center;
+				line-height: 80px;
+				background-color: dimgray;
+				color: black;
+				font-weight: 700;
+				user-select: none;
+			}
+
+			.rate-container .rate-class.rate-class-S .rate-class-type{
+				background-color: #E58282;
+			}
+
+			.rate-container .rate-class.rate-class-A .rate-class-type{
+				background-color: #F2C189;
+			}
+
+			.rate-container .rate-class.rate-class-B .rate-class-type{
+				background-color: #F8EF90;
+			}
+
+			.rate-container .rate-class.rate-class-C .rate-class-type{
+				background-color: #A0CA78;
+			}
+			
+			.rate-container .rate-class.rate-class-D .rate-class-type{
+				background-color: #93B9DF;
+			}
+			
+			.rate-container .rate-class.rate-class-E .rate-class-type{
+				background-color: #777AB6;
+			}
+			
+			.rate-container .rate-class.rate-class-F .rate-class-type{
+				background-color: #C88DB9;
+			}
+
+			.rate-class .rate-children{
+				width: calc(100% - 80px);
+				height: 80px;
+				display: flex;
+				overflow-y: hidden;
+				overflow-x: auto;
+			}
+
+			.rate-class .rate-children::-webkit-scrollbar{
+				display: none;
+			}
+
+			.rate-child{
+				width: 80px;
+				height: 76px;
+				float: left;
+				margin: 2px 5px;
+				background-color: gray;
+				background-position: 50% 50%;
+				background-size: cover;
+			}
+
+		</style>
+
+	</head>
+	<body>
+
+
+		<div class="rate-container">
+
+			<div class="rate-class rate-class-S" data-rate-class="A">
+				<div class="rate-class-type">
+					S
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-A" data-rate-class="A">
+				<div class="rate-class-type">
+					A
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-B" data-rate-class="B">
+				<div class="rate-class-type">
+					B
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-C" data-rate-class="C">
+				<div class="rate-class-type">
+					C
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-D" data-rate-class="D">
+				<div class="rate-class-type">
+					D
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-E" data-rate-class="E">
+				<div class="rate-class-type">
+					E
+				</div>
+				<div class="rate-children"></div>
+			</div>
+			<div class="rate-class rate-class-F" data-rate-class="F">
+				<div class="rate-class-type">
+					F
+				</div>
+				<div class="rate-children"></div>
+			</div>
+		</div>			
+
+
+
+		<script src="jquery.js"></script>
+		<script>
+			var dragged;
+
+			var name = (location.search.indexOf('q=') > -1 ? location.search.split('q=')[1] : prompt("Put rating name: "))+"_rates";
+			function save(){
+				localStorage[name] = $('.rate-container').html();
+			}
+			if(localStorage[name]) $('.rate-container').html(localStorage[name]);
+			function drag(ev) {
+				dragged = this;
+			}
+			function rm(ev){
+				ev.preventDefault();
+				save();
+				$(this).remove();
+			}
+			function drop(ev) {
+				ev.preventDefault();
+				if(!dragged) return;
+				if($(ev.target).hasClass('.rate-class-type')) addChild(dragged.src, ev.target);
+				rm.call(dragged, ev);
+				dragged = null;
+			}
+			function addChild(url, target){
+				var $el = $(target);
+				var child = $(document.createElement('img'));
+				child.addClass('rate-child');
+				//child.css('background-image', 'url("'+content+'")');
+				child.attr('src', url);
+				child.on('dragstart', drag);
+				child.on('contextmenu', rm);
+				if(!$el.hasClass('rate-children')){
+					$el = $el.closest('.rate-class').find('.rate-children');
+					if(!$el) $el = $el.find('.rate-children');
+				}
+				$el.append(child);
+				save();
+			}
+			$(window).on('dragover', (e) => {
+				e.preventDefault();
+			});
+			$(window).on('dragend', (e) => {
+				e.preventDefault();
+			});
+			$(window).on('drop', (e) => {
+				e.preventDefault();
+				if(dragged) return;
+				var files = e.originalEvent.dataTransfer.files;
+				if(files.length < 1) return;
+				Array.from(files).forEach(file => {
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onload = () => {
+						var content = reader.result;
+						addChild(content, e.target);
+					}
+				});
+			});
+			$('.rate-children').on('drop', drop);
+			$('.rate-class-type').on('drop', drop);
+			$('.rate-child').on('dragstart', drag);
+			$('.rate-child').on('contextmenu', rm);
+			$(window).on('paste', (e) => {
+				var item = Array.from(e.originalEvent.clipboardData.items).find(x => /^image\//.test(x.type));
+      
+				var blob = item.getAsFile();
+		
+				var content = URL.createObjectURL(blob);
+
+				addChild(content, $('.rate-class-F').find('.rate-children')[0]);
+			});
+		</script>
+	</body>
+</html>

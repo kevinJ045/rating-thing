@@ -1,0 +1,96 @@
+body{
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #000000;
+	color: #ffffff;
+}
+
+.rate-container{
+	position: absolute;
+	width: 95%;
+	max-width: 800px;
+	height: auto;
+	max-height: 90vh;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #111111;
+	overflow: auto;
+}
+
+.rate-container .rate-class{
+	width: calc(100% - 20px);
+	height: 80px;
+	margin: 10px;
+	background-color: #202020;
+	display: flex;
+}
+
+.rate-container .rate-class .rate-class-type{
+	width: 80px;
+	height: 80px;
+	text-align: center;
+	line-height: 80px;
+	background-color: dimgray;
+	color: black;
+	font-weight: 700;
+	user-select: none;
+}
+
+.rate-container .rate-class.rate-class-S .rate-class-type{
+	background-color: #E58282;
+}
+
+.rate-container .rate-class.rate-class-A .rate-class-type{
+	background-color: #F2C189;
+}
+
+.rate-container .rate-class.rate-class-B .rate-class-type{
+	background-color: #F8EF90;
+}
+
+.rate-container .rate-class.rate-class-C .rate-class-type{
+	background-color: #A0CA78;
+}
+
+.rate-container .rate-class.rate-class-D .rate-class-type{
+	background-color: #93B9DF;
+}
+
+.rate-container .rate-class.rate-class-E .rate-class-type{
+	background-color: #777AB6;
+}
+
+.rate-container .rate-class.rate-class-F .rate-class-type{
+	background-color: #C88DB9;
+}
+
+.rate-class .rate-children{
+	width: calc(100% - 80px);
+	height: 80px;
+	display: flex;
+	overflow-y: hidden;
+	overflow-x: auto;
+}
+
+.rate-class .rate-children::-webkit-scrollbar{
+	display: none;
+}
+
+.rate-child{
+	width: 80px;
+	height: 76px;
+	float: left;
+	margin: 2px 5px;
+	background-color: gray;
+	background-position: 50% 50%;
+	background-size: cover;
+}
+
+
+.title{
+	font-size: 20px;
+	text-align: center;
+	margin: 5px 0;
+}
