@@ -199,7 +199,7 @@ export default class extends Component {
 		
 			var blob = item.getAsFile();
 	
-			this.addFiles([blob], page.find('.rate-class-F').find('.rate-children').raw().at(0));
+			this.addFiles([blob], page.raw().at(0).querySelector('.rate-class-F'));
 		});
 
 		this.items.onChange(() => {
@@ -208,6 +208,18 @@ export default class extends Component {
 
 		this.retrieve().forEach((item: any) => {
 			this.addChild(item.url, page.raw().at(0).querySelector('.rate-class-'+item.class));
+		});
+
+		const self = this;
+		page.raw().find('.rate-class').on('click', function(){
+			const input = document.createElement('input');
+			input.type = 'file';
+			input.onchange = () => {
+				const files = input.files;
+				if(files.length < 1) return;
+				self.addFiles(Array.from(files), this);
+			}
+			input.click();
 		});
 
 	}
