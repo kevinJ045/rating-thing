@@ -9,11 +9,15 @@ export default class extends Component {
 	
 	items : ArrayController<{
 		url: string,
-		class: string
+		class: string,
+		name: string
 	}> = new ArrayController<{
 		url: string,
-		class: string
+		class: string,
+		name: string
 	}>([]);
+
+	static updateMode: "reinit" | "refresh" = "refresh";
 
 
 	initState(props: any): void {
@@ -40,6 +44,7 @@ export default class extends Component {
 		this.dragged = Widget.from(original.target as HTMLElement);
 		original.dataTransfer.setData('text/plain', (original.target as HTMLImageElement).src);
 		original.dataTransfer.setData('text/plain-id', (original.target as HTMLImageElement).id);
+		original.dataTransfer.setData('text/plain-name', (original.target as HTMLImageElement).getAttribute('title'));
 	}
 
 	rm(e: WidgetEvent){
@@ -57,15 +62,26 @@ export default class extends Component {
 		this.items.splice(this.items.indexOf(this.items.find(i => i.url == src)), 1);
 	}
 
-	addChild(url: string, target: Element){
+	addChild(url: string, target: Element, name?: string){
 
 		let widget = Widget.from(target as HTMLElement);
 		const image = new Image(url, {
 			class: 'rate-child',
 			onDragstart: (e: any) => this.drag(e),
-			onContextmenu: (e: any) => this.rm(e)
+			onContextmenu: (e: any) => this.rm(e),
+			onClick: () => {
+				const newname = prompt('name');
+				const item = this.items.find(item => item.url == url)!;
+				if(newname == item.name) return;
+
+				item.name = newname;
+				this.items.set(this.items.get());
+				image.attr({ title: newname });
+			}
 		});
 		image.$id = 'elt-'+image.id;
+
+		image.attr({ title: name });
 
 		if(!widget.hasClass('rate-children')){
 			widget = Widget.from(target.closest('.rate-class') as HTMLElement);
@@ -83,7 +99,8 @@ export default class extends Component {
 
 		this.items.push({
 			url,
-			class: (widget.hasClass('rate-children') ? Widget.from(target.closest('.rate-class') as any) : widget).attr('data-rate-class')
+			name: name || "",
+			class: (widget.hasClass('rate-children') ? Widget.from(target.closest('.rate-class') as any) : widget).attr('data-rate-class') as string
 		});
 	}
 
@@ -181,10 +198,11 @@ export default class extends Component {
 
 				const image = e.dataTransfer.getData('text/plain');
 				const imageid = e.dataTransfer.getData('text/plain-id');
+				const imagename = e.dataTransfer.getData('text/plain-name');
 
 				page.find('#'+imageid).remove();
 				this.removeItem(image);
-				this.addChild(image, e.target as HTMLElement);
+				this.addChild(image, e.target as HTMLElement, imagename);
 				this.dragged = null;
 			} else {
 				var files = e.dataTransfer.files;
@@ -207,11 +225,11 @@ export default class extends Component {
 		});
 
 		this.retrieve().forEach((item: any) => {
-			this.addChild(item.url, page.raw().at(0).querySelector('.rate-class-'+item.class));
+			this.addChild(item.url, page.raw().at(0).querySelector('.rate-class-'+item.class), item.name);
 		});
 
 		const self = this;
-		page.raw().find('.rate-class').on('click', function(){
+		page.raw().find('.rate-class-type').on('click', function(){
 			const input = document.createElement('input');
 			input.type = 'file';
 			input.onchange = () => {

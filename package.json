@@ -8,9 +8,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
   "description": "",
   "dependencies": {
-    "rayous": "^2.8.1"
+    "rayous": "^2.8.2"
   }
 }
